@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>מערכת המלצת ערים</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        // feature names for algorithm and their presented form
+        const dict_feature = {'education_quality_measures':'מדדי השקעה בחינוך',
+            "education_success":'מדדי הצלחה בחינוך',
+            "educated_population":'אוכלוסיה (בוגרת) משכילה',
+            'Salary_norm':'הכנסה ממוצעת גבוהה',
+            'Internet_norm':'חיבור לאינטרנט',
+            'nature_rate':'קירבה לטבע',
+            'job_demands':'ריבוי משרות פתוחות',
+            'pollution':'זיהום אוויר',
+            'crime_score_percent':'פשיעה'}
+
+        const dict_religion = {1:"יהודי", 2:"לא יהודי", 3:"שבט בדווי", 4:"ישוב מעורב"}
+
+        // saves all the cities and their city number
+        const dict = {'472':'אבו גוש',
+            '473':'אבו סנאן',
+            '182':'אבן יהודה',
+            '2,710':'אום אל-פחם',
+            '31':'אופקים',
+            '2,400':'אור יהודה',
+            '1,020':'אור עקיבא',
+            '3,760':'אורנית',
+            '565':'אזור',
+            '2,600':'אילת',
+            '478':'אכסאל',
+            41:'אליכין',
+            '1,309':'אלעד',
+            '3,750':'אלפי מנשה',
+            '3,560':'אלקנה',
+            529:'אעבלין',
+            '3,570':'אריאל',
+            70:'אשדוד',
+            '7,100':'אשקלון',
+            '2,530':'באר יעקב',
+            '9,000':'באר שבע',
+            482:'בועיינה-נוגידאת',
+            '4,001':'בוקעאתא',
+            998:'ביר אל-מכסור',
+            '3,574':'בית אל',
+            480:'בית גן',
+            466:'בית דגן',
+            '9,200':'בית שאן',
+            '2,610':'בית שמש',
+            '3,780':'ביתר עילית',
+            '6,100':'בני ברק',
+            '1,066':'בני עי"ש',
+            944:'בסמת טבעון',
+            '6,200':'בת ים',
+            '1,292':'גדיידה-מכר',
+            485:'גולס',
+            627:'גלגוליה',
+            541:'גסר א-זרקא',
+            487:'גש (גוש חלב)',
+        '3,730':'גבעת זאב',
+        681:'גבעת שמואל',
+        '6,300':'גבעתיים',
+        '2,550':'גדרה',
+        166:'גן יבנה',
+        229:'גני תקווה',
+        489:'דבורייה',
+        492:'דייר חנא',
+        '2,200':'דימונה',
+        '9,700':'הוד השרון',
+        '6,400':'הרצלייה',
+        '9,300':'זכרון יעקב',
+        '1,290':'זמר',
+        975:'זרזיר',
+        '6,500':'חדרה',
+        '6,600':'חולון',
+        '1,303':'חורה',
+        496:'חורפיש',
+        '4,000':'חיפה',
+        '2,034':'חצור הגלילית',
+        '6,700':'טבריה',
+        498:'טורעאן',
+        '2,730':'טייבה',
+        '2,720':'טירה',
+        '2,100':'טירת כרמל',
+        '8,900':'טמרה',
+        '1,295':'יאנוח-גת',
+        46:'יבנאל',
+        '2,660':'יבנה',
+        499:'יפיע',
+        240:'יקנעם עילית',
+        831:'ירוחם',
+        '3,000':'ירושלים',
+        502:'ירכא',
+        504:'כאבול',
+        505:'כאוכב אבו אל-היגא',
+        '1,224':'כוכב יאיר',
+        '1,059':'כסיפה',
+        '1,296':'כסרא-סמיע',
+        978:'כעביה-טבאש-חגאגרה',
+        633:'כפר ברא',
+        '1,263':'כפר ורדים',
+        507:'כפר יאסיף',
+        168:'כפר יונה',
+        509:'כפר כנא',
+        510:'כפר מנדא',
+        '6,900':'כפר סבא',
+        634:'כפר קאסם',
+        654:'כפר קרע',
+        '1,139':'כרמיאל',
+        '1,271':'להבים',
+        '7,000':'לוד',
+        '1,060':'לקיה',
+        '1,015':'מבשרת ציון',
+        '4,201':'מגדל שמס',
+        481:'מגאר',
+        874:'מגדל העמק',
+        '3,797':'מודיעין עילית',
+        28:'מזכרת בתיה',
+        517:'מזרעה',
+        '1,268':'מיתר',
+        '4,203':'מסעדה',
+        518:'מעיליא',
+        '3,616':'מעלה אדומים',
+        '1,063':'מעלות-תרשיחא',
+        99:'מצפה רמון',
+        520:'משהד',
+        '9,100':'נהרייה',
+        522:'נחף',
+        '7,200':'נס ציונה',
+        '7,300':'נצרת',
+        '2,500':'נשר',
+        246:'נתיבות',
+        '7,400':'נתניה',
+        525:'סאגור',
+        '7,500':'סחנין',
+        666:'עומר',
+        530:'עיילבון',
+        511:'עילוט',
+        532:'עין מאהל',
+        '7,600':'עכו',
+        '3,660':'עמנואל',
+        '7,700':'עפולה',
+        531:'עראבה',
+        '2,560':'ערד',
+        637:'ערערה',
+        '1,192':'ערערה-בנגב',
+        537:'פוריידיס',
+        536:'פקיעין (בוקייעה)',
+        '7,800':'פרדס חנה-כרכור',
+        171:'פרדסייה',
+        '7,900':'פתח תקווה',
+        '8,000':'צפת',
+        '3,557':'קדומים',
+        638:'קלנסווה',
+        '4,100':'קצרין',
+        '2,620':'קריית אונו',
+        '3,611':'קריית ארבע',
+        '6,800':'קריית אתא',
+        '9,500':'קריית ביאליק',
+        '2,630':'קריית גת',
+        '2,300':'קריית טבעון',
+        '9,600':'קריית ים',
+        '1,137':'קריית יערים',
+        '8,200':'קריית מוצקין',
+        '1,034':'קריית מלאכי',
+        469:'קריית עקרון',
+        '2,800':'קריית שמונה',
+        '3,640':'קרני שומרון',
+        543:'ראמה',
+        '2,640':'ראש העין',
+        26:'ראש פינה',
+        '8,300':'ראשון לציון',
+        '1,161':'רהט',
+        '8,400':'רחובות',
+        542:'ריינה',
+        922:'רכסים',
+        '8,500':'רמלה',
+        '8,600':'רמת גן',
+        '2,650':'רמת השרון',
+        122:'רמת ישי',
+        '8,700':'רעננה',
+        913:'שבלי - אום אל-גנם',
+        '1,286':'שגב-שלום',
+        '1,031':'שדרות',
+        '1,304':'שוהם',
+        812:'שלומי',
+        538:'שעב',
+        '8,800':'שפרעם',
+        '5,000':'תל אביב -יפו',
+        154:'תל מונד',
+        '1,054':'תל שבע'
+        }
+
+
+
+        function openCity(evt, cityName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            if (cityName === "SearchCity")
+            {
+                const cities_names_array = ['אבו גוש'
+                    ,'אבו סנאן'
+                    ,'אבן יהודה'
+                    ,'אום אל-פחם'
+                    ,'אופקים'
+                    ,'אור יהודה'
+                    ,'אור עקיבא'
+                    ,'אורנית'
+                    ,'אזור'
+                    ,'אילת'
+                    ,'אכסאל'
+                    ,'אליכין'
+                    ,'אלעד'
+                    ,'אלפי מנשה'
+                    ,'אלקנה'
+                    ,'אעבלין'
+                    ,'אריאל'
+                    ,'אשדוד'
+                    ,'אשקלון'
+                    ,'באר יעקב'
+                    ,'באר שבע'
+                    ,'בועיינה-נוגידאת'
+                    ,'בוקעאתא'
+                    ,'ביר אל-מכסור'
+                    ,'בית אל'
+                    ,"בית ג'ן"
+                    ,'בית דגן'
+                    ,'בית שאן'
+                    ,'בית שמש'
+                    ,'ביתר עילית'
+                    ,'בני ברק'
+                    ,'בני עי"ש'
+                    ,'בסמת טבעון'
+                    ,'בת ים'
+                    ,'גדיידה-מכר'
+                    ,'גולס'
+                    ,'גלגוליה'
+                    ,'גסר א-זרקא'
+                    ,'גש (גוש חלב)'
+                ,'גבעת זאב'
+                ,'גבעת שמואל'
+                ,'גבעתיים'
+                ,'גדרה'
+                ,'גן יבנה'
+                ,'גני תקווה'
+                ,'דבורייה'
+                ,'דייר חנא'
+                ,'דימונה'
+                ,'הוד השרון'
+                ,'הרצלייה'
+                ,'זכרון יעקב'
+                ,'זמר'
+                ,'זרזיר'
+                ,'חדרה'
+                ,'חולון'
+                ,'חורה'
+                ,'חורפיש'
+                ,'חיפה'
+                ,'חצור הגלילית'
+                ,'טבריה'
+                ,'טורעאן'
+                ,'טייבה'
+                ,'טירה'
+                ,'טירת כרמל'
+                ,'טמרה'
+                ,'יאנוח-גת'
+                ,'יבנאל'
+                ,'יבנה'
+                ,'יפיע'
+                ,'יקנעם עילית'
+                ,'ירוחם'
+                ,'ירושלים'
+                ,'ירכא'
+                ,'כאבול'
+                ,'כאוכב אבו אל-היגא'
+                ,'כוכב יאיר'
+                ,'כסיפה'
+                ,'כסרא-סמיע'
+                ,'כעביה-טבאש-חגאגרה'
+                ,'כפר ברא'
+                ,'כפר ורדים'
+                ,'כפר יאסיף'
+                ,'כפר יונה'
+                ,'כפר כנא'
+                ,'כפר מנדא'
+                ,'כפר סבא'
+                ,'כפר קאסם'
+                ,'כפר קרע'
+                ,'כרמיאל'
+                ,'להבים'
+                ,'לוד'
+                ,'לקיה'
+                ,'מבשרת ציון'
+                ,'מגדל שמס'
+                ,'מגאר'
+                ,'מגדל העמק'
+                ,'מודיעין עילית'
+                ,'מזכרת בתיה'
+                ,'מזרעה'
+                ,'מיתר'
+                ,'מסעדה'
+                ,'מעיליא'
+                ,'מעלה אדומים'
+                ,'מעלות-תרשיחא'
+                ,'מצפה רמון'
+                ,'משהד'
+                ,'נהרייה'
+                ,'נחף'
+                ,'נס ציונה'
+                ,'נצרת'
+                ,'נשר'
+                ,'נתיבות'
+                ,'נתניה'
+                ,'סאגור'
+                ,'סחנין'
+                ,'עומר'
+                ,'עיילבון'
+                ,'עילוט'
+                ,'עין מאהל'
+                ,'עכו'
+                ,'עמנואל'
+                ,'עפולה'
+                ,'עראבה'
+                ,'ערד'
+                ,'ערערה'
+                ,'ערערה-בנגב'
+                ,'פוריידיס'
+                ,'פקיעין (בוקייעה)'
+                ,'פרדס חנה-כרכור'
+                ,'פרדסייה'
+                ,'פתח תקווה'
+                ,'צפת'
+                ,'קדומים'
+                ,'קלנסווה'
+                ,'קצרין'
+                ,'קריית אונו'
+                ,'קריית ארבע'
+                ,'קריית אתא'
+                ,'קריית ביאליק'
+                ,'קריית גת'
+                ,'קריית טבעון'
+                ,'קריית ים'
+                ,'קריית יערים'
+                ,'קריית מוצקין'
+                ,'קריית מלאכי'
+                ,'קריית עקרון'
+                ,'קריית שמונה'
+                ,'קרני שומרון'
+                ,'ראמה'
+                ,'ראש העין'
+                ,'ראש פינה'
+                ,'ראשון לציון'
+                ,'רהט'
+                ,'רחובות'
+                ,'ריינה'
+                ,'רכסים'
+                ,'רמלה'
+                ,'רמת גן'
+                ,'רמת השרון'
+                ,'רמת ישי'
+                ,'רעננה'
+                ,'שבלי - אום אל-גנם'
+                ,'שגב-שלום'
+                ,'שדרות'
+                ,'שוהם'
+                ,'שלומי'
+                ,'שעב'
+                ,'שפרעם'
+                ,'תל אביב -יפו'
+                ,'תל מונד',
+                'תל שבע']
+
+                // Append values to combo
+                for(let i = 0; i < cities_names_array.length; i++){
+                    const option = document.createElement('option');
+                    option.innerHTML = cities_names_array[i];
+                    option.value = cities_names_array[i];
+                    document.getElementById("select_city_by_name").appendChild(option);
+                }
+            }
+
+            // Recommend city
+            if (cityName === "ChoseRecCityTab"){ // The tab is: show recommended city
+                alert("soon");
+            }
+
+            if (cityName === "ChooseParameters") { // The tab is: choose parameters
+               // alert("Please choose parameters");
+                const parameters_to_choose =  ['מדדי השקעה בחינוך',
+                'מדדי הצלחה בחינוך',
+                'אוכלוסיה (בוגרת) משכילה',
+                'הכנסה ממוצעת גבוהה',
+                'ריבוי משרות פתוחות',
+                'פשיעה',
+                'זיהום אוויר',
+                'קירבה לטבע',
+                'חיבור לאינטרנט'];
+
+
+                // Append values to combo
+                for(let i = 0; i < parameters_to_choose.length; i++){
+                    const option = document.createElement('option');
+                    option.innerHTML = parameters_to_choose[i];
+                    option.value = parameters_to_choose[i];
+                    document.getElementById("selectTable").appendChild(option);
+                }
+            }
+        }
+
+        // present city paragraph and opens pca
+        function show_selected_CITY()
+        {
+            document.getElementById("SeacrhCityBtn").click();
+            $(document.getElementById("after_recommendation")).hide();
+            showParagraph();
+            showCity();
+        }
+
+        // Show the paragraph of the city
+        function readTextFile(file)
+        {
+            const rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, false);
+            rawFile.onreadystatechange = function () {
+                if(rawFile.readyState == XMLHttpRequest.DONE) {
+                    if(rawFile.status === 200 || rawFile.status == 0) {
+                        const allText = rawFile.responseText;
+                        document.getElementById("city_text_area").innerText = allText;
+                    }
+                }
+            }
+            rawFile.send(null);
+        }
+
+        function showParagraph() {
+            // reads file with city's id and show paragraph
+            const a = document.getElementById("select_city_by_name");
+            var value1 = a.options[a.selectedIndex].text;
+            if("{{CITY_algorithm_result}}"!= "False" && value1 == "בחר"){
+                var value1 = "{{CITY_algorithm_result}}"
+            }
+
+            function getKeyByValue(object, value) {
+                return Object.keys(object).find(key => object[key] === value);
+            }
+
+            var b = getKeyByValue(dict, value1);
+            var file_name = "{{url_for('static', filename='paragraphs/')}}"+b+"_paragraph.txt";
+            readTextFile(file_name);
+        }
+           // fetch(file_name)
+            //    .then(response => response.text())
+            //    .then(text => alert(text))
+            // outputs the content of the text file
+          // var new_file = new File(file_name);
+        function openTab(url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function showCity(){
+            var a = document.getElementById("select_city_by_name");
+            var value1 = a.options[a.selectedIndex].text;
+
+            if("{{CITY_algorithm_result}}"!= "False"&& value1 == "בחר"){
+                var value1 = "{{CITY_algorithm_result}}"
+            }
+
+            function getKeyByValue(object, value) {
+                return Object.keys(object).find(key => object[key] === value);
+            }
+
+            var b = getKeyByValue(dict,value1);
+            var line =  "{{url_for('static', filename='graphs/')}}"+b+".html";
+           // alert(line);
+            openTab(line); // Opens the html with city's cluster
+        }
+
+        // The user chooses three parameters and presses send to get a recommendation
+        function pressSend() {
+           // alert("Reccomendation in process2 ")
+            function getKeyByValue(object, value) {
+                return Object.keys(object).find(key => object[key] === value);
+            }
+            var select1 = document.getElementById('select_grade_first');
+            var select1_var = getKeyByValue(dict_feature, document.getElementById("first").innerText);
+            var value1 = select1.options[select1.selectedIndex].text;
+
+
+            var select2 = document.getElementById('select_grade_second');
+            var select2_var = getKeyByValue(dict_feature, document.getElementById("second").innerText);
+            var value2 = select2.options[select2.selectedIndex].text;
+
+            var select3 = document.getElementById('select_grade_third');
+            var select3_var = getKeyByValue(dict_feature, document.getElementById("third").innerText);
+            var value3 = select3.options[select3.selectedIndex].text;
+
+            document.getElementById('religion_pref').value = document.getElementById('selectReligion').value;
+            document.getElementById('district_pref').value = document.getElementById('selectMahoz').value;
+            document.getElementById('param1').value =select1_var ;
+            document.getElementById('param1_rank').value = value1;
+            document.getElementById('param2').value = select2_var;
+            document.getElementById('param2_rank').value = value2;
+            document.getElementById('param3').value = select3_var;
+            document.getElementById('param3_rank').value = value3;
+            var form = document.getElementById("final_form");
+            form.submit();
+            // openCity(event, 'ChoseRecCityTab');
+
+        }
+
+        function getSelectValues(select) {
+
+            var result = [];
+            var options = select && select.options;
+            var opt;
+
+            for (var i=0, iLen=options.length; i<iLen; i++) {
+                opt = options[i];
+
+                if (opt.selected) {
+                    result.push( opt.text);
+                  // result.push(opt.value || opt.text);
+                   // alert(opt.value)
+                    // place value in field
+
+                   // document.getElementById("first").innerText = opt.value;
+                }
+            }
+
+            if (result.length !== 3){
+                alert("נא לבחור 3 פרמטרים");
+            }
+            else{
+
+                // Place the parameters in table
+                document.getElementById("third").innerText = result.pop();
+                document.getElementById("second").innerText = result.pop();
+                document.getElementById("first").innerText = result.pop();
+                document.getElementById("sendBtn").disabled = false;
+
+                document.getElementById("select_grade_first").disabled = false;
+                document.getElementById("select_grade_second").disabled = false;
+                document.getElementById("select_grade_third").disabled = false;
+
+            }
+            var table = document.getElementsByTagName('output')[0];
+
+           // document.getElementById("yourSubTableId").style.display = "none";  //Hide the table
+            return result; // result - all the selected options
+        }
+
+        // Form validation
+        function validate(select) {
+            var options = select && select.options;
+        }
+    </script>
+    <style>
+        body {font-family: Arial;}
+
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
+</head>
+
+<style>
+    body {
+        background-image: url("{{url_for('static', filename='cities.jpeg')}}");
+        background-repeat: repeat;
+    }
+    .combo{
+        padding:10px;
+    }
+</style>
+<body>
+<br>
+<br>
+<h1 style="color:honeydew" align="center">CITY: Choose the Israeli Town for You</h1>
+<br>
+<br>
+<br>
+<div class="tab" align="right" style="text-align: right">
+    <button align="right" style="text-align: right" id="ChooseParametersBtn" class="tablinks" onclick="openCity(event, 'ChooseParameters')">חיפוש ערים מומלצות לפי מאפיינים</button>
+    <button align="right" style="text-align: right" id="SeacrhCityBtn" class="tablinks" onclick="openCity(event, 'SearchCity')">חיפוש עיר לפי שם עיר</button>
+
+</div>
+
+ {% if CITY_algorithm_result %}
+    <div class="after_recommendation" id = "after_recommendation" align="center" style="...">
+        <table style="background-color:#eeeee4">
+       <tr class="recommended city">
+        <td style="text-align: center">
+            <div class="ui-icon-star-outer" >
+                <div class="ui-icon-star-inner">
+                     <p style="font-family:Arial;">
+                         {% if CITY_algorithm_result == "False" %}
+                            לא נמצאה עיר המתאימה להעדפותיך
+                         {% else %}
+                                :על סמך העדפותיך, העיר המומלצת עבורך היא
+                                <br>
+                                {{CITY_algorithm_result}}
+                                 <br>
+                                 למדיע נוסף
+                             </p>
+                            <button id="Show_selected_CITY" style="text-align: left" name="Show_selected_CITY" class="tablinks" onclick="show_selected_CITY()" >לחץ</button>
+                        {% endif %}
+                </div>
+            </div>
+        </td>
+       </tr>
+        </table>
+    </div>
+ {% endif %}
+
+<div id="ChooseParameters" class="tabcontent" style="background-color: #eeeeee; text-align: left" >
+    <div class="container" style="background-color: #eeeeee" >
+        <table  class="table tab-pane" style="align-self: start; size: 6px;" id="table1"  lang="he" align="right">
+            <thead style="text-align: right" title="נא לבחור 3 פרמטרים">
+            <br>
+            <br>
+            <tr>
+                <td>
+                    <th style="color: blue; text-align: right"> נא לבחור 3 פרמטרים </th>
+                </td>
+            </tr>
+            <tr style="text-align: right">
+                <td>
+                    <button onclick="
+                    //var el = document.getElementsByTagName('selectTable')[0];
+                    var el = document.getElementById('selectTable');
+                    //alert(getSelectValues(el));
+                    getSelectValues(el);
+                    ">דרג פרמטרים נבחרים</button>
+                </td>
+                <td style="text-align: right">
+                    <label for="selectReligion"><select name = 'religion' multiple size = 3 align="center" id="selectReligion">
+                        <option value = '1'>יהודי</option>
+                        <option value = '2'>לא יהודי</option>
+                        <option value = '3'>שבט בדווי</option>
+                        <option value = '4'>ישוב מעורב</option>
+
+                    </select>
+                    </label>
+                    <label for="selectMahoz"><select name = 'mahoz' multiple size = 3 align="center" id="selectMahoz">
+                        <option value = 'north_west'>גליל מערבי</option>
+                        <option value = 'far_east_north'>גליל מזרחי וצפון רחוק</option>
+                        <option value = 'center'>מרכז</option>
+                        <option value = 'jerusalem'>ירושלים, יהודה ושומרון</option>
+                        <option value = 'south'>דרום ובאר שבע</option>
+
+                    </select>
+                    </label>
+                </td>
+                <td style="text-align: center">
+                <form method="post"  name = "myForm" action="Cities.html" onsubmit = "return(validate());">
+                    <label>
+                        <select name = 'subjects[]' multiple size = 6 align="center" id="selectTable" style="text-align: center">
+
+                        </select>
+                    </label>
+                </form>
+                </td>
+            </tr>
+            </thead>
+        </table>
+        <table  class="table tab-pane" style="align-self: start; size: 6px;" id="table2"  lang="he" align="right">
+        <thead style="text-align: right;color: blue" title="נא לבחור 3 פרמטרים">
+            <tr>
+                <th style="text-align: center; color: blue">דירוג עבור פרמטר (5-הכי גבוה, 1-הכי נמוך)</th>
+                <th style="text-align: center;color: blue">פרמטרים לבחירת עיר</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr class="first">
+                    <td style="text-align: center">
+                        <div class="ui-icon-star-outer">
+                            <div class="ui-icon-star-inner">
+                                <select id="select_grade_first" name = 'select_grade_first' class="combo" style="text-align: right" disabled>
+                                    <option value="Select">בחר</option>
+                                    <option value="2">5</option>
+                                    <option value="4">4</option>
+                                    <option value="5">3</option>
+                                    <option value="6">2</option>
+                                    <option value="7">1</option>
+                                </select>
+                            </div>
+                        </div>
+                        <span class="number"></span>
+                    </td>
+                    <td width="40%" id="first" style="text-align: center">פרמטר ראשון</td>
+                </tr>
+                <tr class="second">
+                    <td style="text-align: center">
+                        <div class="ui-icon-star-outer">
+                            <div class="ui-icon-star-inner">
+                                <select id="select_grade_second" name = 'select_grade_second' class="combo" style="text-align: right" disabled>
+                                    <option value="Select">בחר</option>
+                                    <option value="2">5</option>
+                                    <option value="4">4</option>
+                                    <option value="5">3</option>
+                                    <option value="6">2</option>
+                                    <option value="7">1</option>
+                                </select>
+                            </div>
+                        </div>
+                        <span class="number"></span>
+                    </td>
+                    <td width="40%" id="second" style="text-align: center">פרמטר שני</td>
+                </tr>
+                <tr class="third">
+                    <td style="text-align: center">
+                        <div class="ui-icon-star-outer">
+                            <div class="ui-icon-star-inner">
+                                <select name = 'select_grade_third' id="select_grade_third" class="combo" style="text-align: right" disabled>
+                                    <option value="Select">בחר</option>
+                                    <option value="2">5</option>
+                                    <option value="4">4</option>
+                                    <option value="5">3</option>
+                                    <option value="6">2</option>
+                                    <option value="7">1</option>
+                                </select>
+                            </div>
+                        </div>
+                        <span class="number"></span>
+                    </td>
+                    <td width="40%" id="third" style="text-align: center">פרמטר שלישי</td>
+                </tr>
+
+            <tr style="text-align: center">
+                <td style="...">
+                    <form id="final_form" action = "{{ url_for('Chosen_city') }}" method = "post">
+                        <input type="hidden" id = "religion_pref" name = "religion_pref"></input>
+                        <input type="hidden" id = "district_pref" name = "district_pref"></input>
+                        <input type="hidden" id = "param1" name = "param1"></input>
+                        <input type="hidden" id = "param1_rank" name = "param1_rank"></input>
+                        <input type="hidden" id = "param2" name = "param2"></input>
+                        <input type="hidden" id = "param2_rank" name = "param2_rank"></input>
+                        <input type="hidden" id = "param3" name = "param3"></input>
+                        <input type="hidden" id = "param3_rank" name = "param3_rank"></input>
+                         <button id="sendBtn" style="text-align: left" name="sendBtn" class="tablinks" onclick="pressSend()" disabled>שליחה</button>
+<!--                         <p><input type = "submit" value = "שליחה"></p>-->
+                    </form>
+
+                </td>
+                <td></td>
+            </tr>
+            <br>
+            <br>
+
+
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="SearchCity" class="tabcontent"  style="background-color: #eeeeee; text-align: left" >
+    <div class="container" style="background-color: #eeeeee" >
+        <table  class="table tab-pane" style="align-self: start; size: 6px;" id="table4"  lang="he" align="right">
+            <thead style="text-align: right" title="חיפוש לפי שם עיר">
+            <br>
+            <br>
+            <tr>
+                <td >
+                    <button id="chooseCityToShowBtn" style="text-align: left" name="sendBtn" class="tablinks" onclick="showCity()" >בחר</button>
+                    <button id="chooseParagraphBtn" style="text-align: left" name="showPragraphBtn" class="tablinks" onclick="showParagraph()" >הצג פרטי עיר</button>
+                </td>
+
+                <td style="text-align: center">
+                    <div class="ui-icon-star-outer">
+                        <div class="ui-icon-star-inner">
+                            <label for="select_city_by_name"><select name = 'select_city_by_name' id="select_city_by_name" class="combo" style="text-align: right">
+                                <option value="Select">בחר</option>
+                            </select>
+                            </label>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                <th style="color: blue; text-align: right"> בחר שם של עיר </th>
+            </tr>
+            <tr style="text-align: right">
+                <td style="text-align: right">
+                    <textarea style="text-align: right" id="city_text_area" name="w3review" rows="6" cols="55">
+                        תיאור
+                    </textarea>
+                </td>
+                <td>
+                    <label for="city_text_area" style="text-align: left">תיאור העיר</label>
+                </td>
+            </tr>
+
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div id="ChoseRecCityTab" class="tabcontent" style="background-color: #eeeeee; text-align: left" >
+    <div class="container" style="background-color: #eeeeee" >
+        <table  class="table tab-pane" style="align-self: start; size: 6px;" id="table5"  lang="he" align="right">
+            <thead style="text-align: right" title="חיפוש לפי שם עיר">
+            <br>
+            <br>
+            <tr>
+                <td>
+                <th style="color: blue; text-align: right"> העיר המומלצת היא </th>
+                <button id="backBtn" style="text-align: left" name="sendBtn" class="tablinks" onclick="openCity(event, 'ChooseParameters')" >חזרה</button>
+                </td>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
+
+
+
