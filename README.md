@@ -11,7 +11,7 @@ A tool for comparison and recommendation of Israeli cities based on favorable pr
 1. Download the entire CITY_code and Data folder and place them in the same folder.
 2. Run the main.py file - it runs the *Flask* function. The *Flask* interface allows you to combine Python and HTML / JS.
 3. Open the Chrome browser and enter the following link: 
-	http: // localhost: 5000 /
+	http://localhost: 5000/ \n
 This opens Cities.html.
 4. Feel free to play and find the city that suits you.
 
