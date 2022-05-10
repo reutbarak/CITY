@@ -1,3 +1,7 @@
+####################################################
+# Crawling jobs quantities from Jobmaster website
+# Done by Gil
+####################################################
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
