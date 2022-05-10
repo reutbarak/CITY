@@ -7,9 +7,6 @@ import time
 import pandas as pd
 
 
-PATH_data = "C:/Users/USER/Desktop/gil/PhD/year_break_3/Needle_in_data/Final_project/Data/"
-
-
 # create numeric value for goal/percentage values
 def create_numeric_value(str_value):
     if "$" in str_value:
@@ -24,11 +21,11 @@ def create_numeric_value(str_value):
 # Assuming chrome browser
 # download chromedriver.exe from https://chromedriver.chromium.org/downloads
 # set PATH_chromedriver to its location
-PATH_chromedriver = "C:/Users/USER/Desktop/gil/PhD/year_break_3/Needle_in_data/ex1/Creepy_crawling/chromedriver.exe"
+PATH_chromedriver = "../chromedriver.exe"
 # crawled url: indiegogo HOME category
 alljobs_url = "https://www.alljobs.co.il/"
 # how many pages to read?
-settlements = pd.read_csv(PATH_data+"CITY_merged_dataset_02.csv" ,encoding="utf-8-sig", usecols= ["settlement"])
+settlements = pd.read_csv(r"../Data/CITY_merged_dataset_02.csv" ,encoding="utf-8-sig", usecols= ["settlement"])
 settlements = settlements["settlement"]
 # how many seconds to delay?
 delay_seconds = 5
@@ -91,5 +88,5 @@ for stlmt in settlements:
 
 
 job_demand_df = pd.DataFrame({"settlement":stlmt,"job_demands":job_demands_per_settlement})
-job_demand_df.to_csv(PATH_data+"job_demands_jobmaster_co_il.csv" ,encoding="utf-8-sig")
+job_demand_df.to_csv(r"../Data/job_demands_jobmaster_co_il.csv" ,encoding="utf-8-sig")
 print("done")

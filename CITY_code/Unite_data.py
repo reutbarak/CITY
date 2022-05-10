@@ -24,10 +24,8 @@ occupations_by_letter = {"A": "חקלאות,ייעור ודיג", "B-C": "תעש
 
 religion_by_num = {1: "יהודי", 2: "לא יהודי", 3: "שבט בדווי", 4: "ישוב מעורב"}
 
-PATH_data = "C:/Users/USER/Desktop/gil/PhD/year_break_3/Needle_in_data/Final_project/Data/"
-
 # read tables, adjust column names
-edu_table = pd.read_csv(PATH_data+"education_2019_selected_features.csv", encoding="UTF-8", na_values = ["..", "", "-"])
+edu_table = pd.read_csv(r"../Data/education_2019_selected_features.csv", encoding="UTF-8", na_values = ["..", "", "-"])
 # 201 settlements
 edu_table.columns = ['settlement_num', 'settlement',
        'avg_class_size', # lower = better education conditions
@@ -43,13 +41,13 @@ edu_table.columns = ['settlement_num', 'settlement',
        'avg_teacher_hours_per_student'] # higher = better education conditions
 
 # 176 settlements
-economic_social_table = pd.read_csv(PATH_data+"economic_social_small_final.csv", encoding="UTF-8", na_values = ["..", "", "-"])
+economic_social_table = pd.read_csv(r"../Data/economic_social_small_final.csv", encoding="UTF-8", na_values = ["..", "", "-"])
 economic_social_table.columns = ['settlement', 'edu_years_avg_norm', 'academy_manager_workers_norm',
        'academy_graduates_norm', 'Salary_norm', 'Internet_norm', 'work_10_norm',
        'periphery_value_norm']
 
 # 89 settlements
-pollution_table = pd.read_csv(PATH_data+"israel_cities_air_pollution.csv", encoding="UTF-8", na_values = ["..", "", "-"])
+pollution_table = pd.read_csv(r"../Data/israel_cities_air_pollution.csv", encoding="UTF-8", na_values = ["..", "", "-"])
 pollution_table.columns = ["settlement", "value_of_pollution"]
 
 # for pollution: choose max pollution value for each settlement
@@ -61,31 +59,31 @@ for stlmt in pollution_table_unique["settlement"]:
     pollution_table_unique.loc[stlmt, "pollution"] = np.max(pollution_table.loc[pollution_table["settlement"] == stlmt, "value_of_pollution"])
 
 # 1482 settlements
-settlement_district_population_religion_altitude_coord = pd.read_csv(PATH_data+"settlements_population_district_religion_altitude_coordinates.csv", encoding="UTF-8", na_values=["..", "", "-"])
+settlement_district_population_religion_altitude_coord = pd.read_csv(r"../Data/settlements_population_district_religion_altitude_coordinates.csv", encoding="UTF-8", na_values=["..", "", "-"])
 settlement_district_population_religion_altitude_coord.columns = ["settlement", "settlement_num", "district",
                                                                   "dist_num", "religion_num", "overall_population_2020",
                                                                   "coordinates", "altitude_avg"]
 
 # 257 settlements
-crime_table = pd.read_csv(PATH_data+"Crime-map-2021_minimized.csv", encoding="UTF-8", na_values = ["..", "", "-"])
+crime_table = pd.read_csv(r"../Data/Crime-map-2021_minimized.csv", encoding="UTF-8", na_values = ["..", "", "-"])
 crime_table.columns = ["settlement", "crime_score_abs"]
 
 # 175 settlements
-job_demand_table = pd.read_csv(PATH_data+"job_demands_jobmaster_co_il.csv", encoding="UTF-8", na_values = ["..", "", "-"])
+job_demand_table = pd.read_csv(r"../Data/job_demands_jobmaster_co_il.csv", encoding="UTF-8", na_values = ["..", "", "-"])
 
 
 # occupation per district table
-occupation_district_table = pd.read_csv(PATH_data+"occupation_by_district_israel.csv", encoding="UTF-8",
+occupation_district_table = pd.read_csv(r"../Data/occupation_by_district_israel.csv", encoding="UTF-8",
                                         na_values = ["..", "", "-", "..  ", "-  "])
 occupation_district_table.columns = ['T', 'S', 'R', 'Q', 'P', 'O', 'N', 'M', 'L', 'K', 'J', '  I', '  H',
        'G', 'F', 'E', 'D', 'B-C', 'A', 'overall_Thousands', 'district_name']
 
 # district name to district number (for merge)
-district_numbers_table = pd.read_csv(PATH_data+"settlement_to_district.csv")
+district_numbers_table = pd.read_csv(r"../Data/settlement_to_district.csv")
 district_numbers_table.columns = ["district_name", "dist_num"]
 
 # Proximity to nature
-nature_table = pd.read_csv(PATH_data+"nature_rate.csv", encoding="UTF-8", na_values = ["..", "", "-"])
+nature_table = pd.read_csv(r"../Data/nature_rate.csv", encoding="UTF-8", na_values = ["..", "", "-"])
 nature_table.columns = ["settlement", "nature_rate"]
 
 # input: column
@@ -201,7 +199,7 @@ merged_df["large_district"] = [get_key(dist) for dist in merged_df["district_nam
 
 
 
-merged_df.to_csv(PATH_data+"CITY_merged_dataset_09.csv" ,encoding="utf-8-sig")
+merged_df.to_csv(r"../Data/CITY_merged_dataset_09.csv" ,encoding="utf-8-sig")
 # check for NAN values for every settlement
 
 
