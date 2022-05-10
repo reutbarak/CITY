@@ -1,7 +1,8 @@
 from flask import Flask, render_template, url_for, request, send_from_directory
 import CITY_algorithm as CT
 
-app = Flask(__name__, static_url_path='/C:/Users/reutb/Documents/university/Needle/project/Final_project/CITY_code/templates')
+# app = Flask(__name__, static_url_path='/C:/Users/reutb/Documents//Projects/CITY/CITY/CITY_code/templates')
+app = Flask(__name__, static_url_path='/templates')
 
 # use this to extract form info inserted by the user
 @app.route('/', methods = ['GET', 'POST'])

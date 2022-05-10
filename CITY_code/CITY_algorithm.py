@@ -11,7 +11,7 @@ import numpy as np
 
 # constants
 
-PATH_data = "C:/Users/reutb/Documents/university/Needle/project/Final_project/Data/"
+# PATH_data = "C:/Users/reutb/Documents/Projects/CITY/CITY/Data/"
 
 occupations_by_letter = {"A": "חקלאות,ייעור ודיג", "B-C": "תעשייה, כרייה וחציבה", "D": "אספקת חשמל", "E": "אספקת מים, שירותי ביוב וטיהור וטיפול", "F": "בינוי", "G": "מסחר סיטוני וקמעונאי ותיקון כלי רכב",
                          "H": "שירותי תחבורה, אחסנה, דואר ובלדרות", "I": "שירותי אירוח ואוכל", "J": "מידע ותקשורת", "K": "שירותים פיננססים ושירותי ביטוח", "L": "פעילויות בנדלן", "M": "שירותים מקצועיים, מדעיים וטכניים",
@@ -39,12 +39,12 @@ def NormalizeData(data):
 #           chosen parameters multiplied by their ranking after normalization
 def generate_algorithm_table(religion_pref, district_pref, param1, param1_rank, param2, param2_rank,  param3, param3_rank):
     # read data
-    # # relative path
-    # CITY_merged_dataset = pd.read_csv(r"../Data/CITY_merged_dataset_09.csv", encoding="UTF-8",
-    #                                   na_values=["..", "", "-"], index_col=0)
-    # absolute path
-    CITY_merged_dataset = pd.read_csv(PATH_data + "/CITY_merged_dataset_09.csv", encoding="UTF-8",
-                                      na_values=["..", "", "-"], index_col = 0)
+    # relative path
+    CITY_merged_dataset = pd.read_csv(r"../Data/CITY_merged_dataset_09.csv", encoding="UTF-8",
+                                      na_values=["..", "", "-"], index_col=0)
+    # # absolute path
+    # CITY_merged_dataset = pd.read_csv(PATH_data + "/CITY_merged_dataset_09.csv", encoding="UTF-8",
+    #                                   na_values=["..", "", "-"], index_col = 0)
     CITY_merged_dataset["religion_num"] = [religion_by_num[rel] for rel in CITY_merged_dataset["religion"]]
     # normalize
     for col in parameters_for_algorithm:
